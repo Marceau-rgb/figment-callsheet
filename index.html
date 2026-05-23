@@ -723,32 +723,59 @@ async function doSearch() {
 async function loadWx(lat, lon, city, startDate) {
   const wx = document.getElementById('wxw');
   wx.innerHTML = '<p id="wxs">Loading…</p>';
+  const DN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const WX = {0:'sun',1:'cloud-sun',2:'cloud-sun',3:'cloud',45:'mist',48:'mist',51:'cloud-drizzle',53:'cloud-drizzle',55:'cloud-rain',61:'cloud-rain',63:'cloud-rain',65:'cloud-rain',71:'cloud-snow',73:'cloud-snow',75:'cloud-snow',80:'cloud-drizzle',81:'cloud-rain',82:'cloud-storm',95:'cloud-storm',96:'cloud-storm',99:'cloud-storm'};
+  const WD = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',51:'Light drizzle',61:'Light rain',63:'Rain',71:'Snow',80:'Showers',95:'Thunderstorm'};
+  const mb = 'https://www.meteoblue.com/en/weather/forecast/week/'+encodeURIComponent(city)+'?geoloc=fixed&lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);
   try {
     const today = new Date(); today.setHours(0,0,0,0);
-    let url;
+    let url, note = '', sliceStart = 0;
     if (startDate) {
       const sd = new Date(startDate + 'T12:00:00');
+      const diffDays = Math.round((sd - today) / 86400000);
       const ed = new Date(sd); ed.setDate(ed.getDate() + 4);
-      const end = ed.toISOString().split('T')[0];
-      url = Math.round((sd-today)/86400000) < -1
-        ? 'https://archive-api.open-meteo.com/v1/archive?latitude='+lat+'&longitude='+lon+'&start_date='+startDate+'&end_date='+end+'&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto'
-        : 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&daily=weather_code,temperature_2m_max,temperature_2m_min&start_date='+startDate+'&end_date='+end+'&timezone=auto&forecast_days=16';
+      const endStr = ed.toISOString().split('T')[0];
+      note = '<div class="wxn">'+sd.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</div>';
+      if (diffDays < -1) {
+        // Past date — use archive API
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude='+lat+'&longitude='+lon
+          +'&start_date='+startDate+'&end_date='+endStr
+          +'&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto';
+      } else if (diffDays <= 15) {
+        // Within forecast window — use standard forecast, then slice to right day
+        url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon
+          +'&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=16&timezone=auto';
+        sliceStart = Math.max(0, diffDays);
+      } else {
+        // Too far in the future
+        wx.innerHTML = note + '<p class="wxsrc" style="color:var(--muted)">Forecast only available up to 16 days ahead. <a href="'+mb+'" target="_blank">Check MeteoBlue ↗</a></p>';
+        return;
+      }
     } else {
-      url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=5&timezone=auto';
+      url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon
+        +'&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=5&timezone=auto';
     }
-    const r = await fetch(url); if (!r.ok) throw new Error('HTTP ' + r.status);
-    const wd = await r.json(); if (!wd.daily?.time?.length) throw new Error('No data');
-    const DN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    const WX = {0:'sun',1:'cloud-sun',2:'cloud-sun',3:'cloud',45:'mist',51:'cloud-drizzle',53:'cloud-drizzle',55:'cloud-rain',61:'cloud-rain',63:'cloud-rain',65:'cloud-rain',71:'cloud-snow',73:'cloud-snow',80:'cloud-drizzle',81:'cloud-rain',95:'cloud-storm',99:'cloud-storm'};
-    const WD = {0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',51:'Drizzle',61:'Rain',71:'Snow',80:'Showers',95:'Storm'};
-    const mb = 'https://www.meteoblue.com/en/weather/forecast/week/' + encodeURIComponent(city) + '?geoloc=fixed&lat=' + lat.toFixed(4) + '&lon=' + lon.toFixed(4);
-    const note = startDate ? '<div class="wxn">' + new Date(startDate+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) + '</div>' : '';
-    const days = wd.daily.time.slice(0,5).map((t,i) => {
-      const dv = new Date(t+'T12:00:00'), c = wd.daily.weather_code[i];
-      return '<div class="wxd" title="'+(WD[c]||'')+'"><span class="wxdn">'+DN[dv.getDay()]+'</span><div class="wxi"><i class="ti ti-'+(WX[c]||'cloud-question')+'"></i></div><div class="wxh">'+Math.round(wd.daily.temperature_2m_max[i])+'°</div><div class="wxl">'+Math.round(wd.daily.temperature_2m_min[i])+'°</div></div>';
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const wd = await r.json();
+    if (!wd.daily?.time?.length) throw new Error('No weather data returned');
+    const times = wd.daily.time.slice(sliceStart, sliceStart + 5);
+    const codes = wd.daily.weather_code.slice(sliceStart, sliceStart + 5);
+    const maxT  = wd.daily.temperature_2m_max.slice(sliceStart, sliceStart + 5);
+    const minT  = wd.daily.temperature_2m_min.slice(sliceStart, sliceStart + 5);
+    const days = times.map((t, i) => {
+      const dv = new Date(t + 'T12:00:00'), c = codes[i];
+      return '<div class="wxd" title="'+(WD[c]||'')+'"><span class="wxdn">'+DN[dv.getDay()]+'</span>'
+        +'<div class="wxi"><i class="ti ti-'+(WX[c]||'cloud-question')+'"></i></div>'
+        +'<div class="wxh">'+Math.round(maxT[i])+'°</div>'
+        +'<div class="wxl">'+Math.round(minT[i])+'°</div></div>';
     }).join('');
-    wx.innerHTML = note + '<div class="wxg">' + days + '</div><p class="wxsrc">Open-Meteo · <a href="' + mb + '" target="_blank" rel="noopener">Full forecast MeteoBlue ↗</a></p>';
-  } catch (e) { wx.innerHTML = '<p id="wxs" style="color:#c00">Weather unavailable: ' + e.message + '</p>'; }
+    wx.innerHTML = note+'<div class="wxg">'+days+'</div>'
+      +'<p class="wxsrc">Open-Meteo · <a href="'+mb+'" target="_blank" rel="noopener">Full forecast on MeteoBlue ↗</a></p>';
+  } catch(e) {
+    wx.innerHTML = '<p id="wxs" style="color:#c00">Weather unavailable — '+e.message+'.<br>'
+      +'<a href="'+mb+'" target="_blank" style="color:var(--muted)">Check MeteoBlue directly ↗</a></p>';
+  }
 }
 
 function buildMls(q, lat, lon, city) {
