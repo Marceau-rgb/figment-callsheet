@@ -212,8 +212,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:
 .wxg{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
 .wx-wrap{display:grid;grid-template-columns:auto 1fr;gap:0 16px;align-items:center}
 .wx-left{display:flex;flex-direction:column;align-items:flex-start;padding:12px 0 12px 4px;border-right:1px solid var(--soft);padding-right:16px}
-.wx-left-icon{line-height:0;color:var(--ink)}
-.wx-left-icon svg{display:block}
+.wx-left-icon i{font-size:36px;color:var(--ink);display:block;line-height:1.2}
 .wx-left-temp{font-size:44px;font-weight:300;line-height:1;color:var(--ink);margin-top:2px}
 .wx-left-desc{font-size:11px;color:var(--muted);margin-top:4px}
 .wx-left-range{font-size:11px;color:var(--muted);margin-top:1px}
@@ -223,7 +222,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:
 .wx-day-row:last-child{border-bottom:none}
 .wx-day-row.wx-shoot{font-weight:600}
 .wx-dr-name{flex:1;font-size:12px;color:var(--ink)}
-.wx-dr-icon{color:var(--muted);width:24px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:0}
+.wx-dr-icon{color:var(--muted);width:22px;text-align:center;flex-shrink:0;font-size:15px}
 .wx-dr-lo{font-size:12px;color:var(--muted);min-width:28px;text-align:right}
 .wx-dr-hi{font-size:12px;font-weight:500;min-width:28px;text-align:right;color:var(--ink)}
 .wxi i{font-size:18px;color:var(--ink);margin:2px 0;display:block}
@@ -248,7 +247,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:
 
 .cw{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-thead th{text-align:left;padding:4px 7px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1.5px solid var(--ink);font-weight:500;white-space:nowrap;overflow:hidden}
+thead th{text-align:left;padding:4px 7px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid #bbb;font-weight:500;white-space:nowrap;overflow:hidden}
 tbody td{padding:5px 7px;border-bottom:1px solid var(--bg);outline:none;cursor:text;vertical-align:top;overflow:hidden;word-break:break-word}
 tbody td:focus{background:var(--bg)}
 tbody tr:hover td{background:var(--bg)}
@@ -342,7 +341,7 @@ tbody tr:hover .tdx{opacity:1}
     box-shadow:none!important;
     border:none!important;
     border-radius:0!important;
-    border-top:1.5px solid #1a1a1a!important;
+    border-top:2.5px solid #1a1a1a!important;
     padding-top:8pt!important;
     background:#fff!important;
   }
@@ -365,7 +364,7 @@ tbody tr:hover .tdx{opacity:1}
   thead th{
     font-size:7pt!important;
     padding:3pt 4pt!important;
-    border-bottom:1px solid #1a1a1a!important;
+    border-bottom:1px solid #bbb!important;
     color:#555!important;
   }
   tbody td{
@@ -1012,7 +1011,7 @@ async function loadWx(lat,lon,city,startDate){
     const sWind=windMax[si]?Math.round(windMax[si])+' km/h':'';
     const sRain=precip[si]&&precip[si]>0?precip[si].toFixed(1)+' mm':'';
     const leftBlock='<div class="wx-left">'
-      +'<div class="wx-left-icon">'+wxIcon(sc,48)+'</div>'
+      +'<div class="wx-left-icon"><i class="ti ti-'+({0:'sun',1:'cloud-sun',2:'cloud-sun',3:'cloud',45:'mist',48:'mist',51:'cloud-drizzle',53:'cloud-drizzle',55:'cloud-rain',61:'cloud-rain',63:'cloud-rain',65:'cloud-rain',71:'cloud-snow',73:'cloud-snow',75:'cloud-snow',80:'cloud-drizzle',81:'cloud-rain',82:'cloud-storm',85:'cloud-snow',86:'cloud-snow',95:'cloud-storm',96:'cloud-storm',99:'cloud-storm'}[sc]||'cloud-question')+'" style="font-size:36px"></i></div>'
       +'<div class="wx-left-temp">'+Math.round(sMax)+'°</div>'
       +'<div class="wx-left-desc">'+(WD[sc]||'')+'</div>'
       +'<div class="wx-left-range">↑ '+Math.round(sMax)+'°  ↓ '+Math.round(sMin)+'°</div>'
@@ -1024,7 +1023,7 @@ async function loadWx(lat,lon,city,startDate){
       const isShoot=i===si;
       return '<div class="wx-day-row'+(isShoot?' wx-shoot':'')+'">'
         +'<span class="wx-dr-name">'+DN[dv.getDay()]+' '+dv.getDate()+(isShoot?' ★':'')+'</span>'
-        +'<span class="wx-dr-icon">'+wxIcon(c,20)+'</span>'
+        +'<span class="wx-dr-icon"><i class="ti ti-'+({0:'sun',1:'cloud-sun',2:'cloud-sun',3:'cloud',45:'mist',48:'mist',51:'cloud-drizzle',53:'cloud-drizzle',55:'cloud-rain',61:'cloud-rain',63:'cloud-rain',65:'cloud-rain',71:'cloud-snow',73:'cloud-snow',75:'cloud-snow',80:'cloud-drizzle',81:'cloud-rain',82:'cloud-storm',85:'cloud-snow',86:'cloud-snow',95:'cloud-storm',96:'cloud-storm',99:'cloud-storm'}[c]||'cloud-question')+'" style="font-size:15px"></i></span>'
         +'<span class="wx-dr-lo">'+Math.round(minT[i])+'°</span>'
         +'<span class="wx-dr-hi">'+Math.round(maxT[i])+'°</span>'
         +'</div>';
