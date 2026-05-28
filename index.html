@@ -579,13 +579,13 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">05</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-style">
-          <tr><td contenteditable spellcheck="false">Stylist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Styling Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Art Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Stylist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Styling Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Art Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
         </tbody></table></div>
-        <button class="add" onclick="rAdd('tb-style',false)"><i class="ti ti-plus"></i> Add contact</button>
+        <button class="add" onclick="rAdd('tb-style',true)"><i class="ti ti-plus"></i> Add contact</button>
       </div>
     </div>
 
@@ -597,14 +597,14 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">06</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-hmu">
-          <tr><td contenteditable spellcheck="false">Hair Stylist</td><td contenteditable spellcheck="false">[First Last — C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Hair Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Make-up Artist</td><td contenteditable spellcheck="false">[First Last — C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">MUA Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Hair Stylist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Hair Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Make-up Artist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">MUA Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
         </tbody></table></div>
-        <button class="add" onclick="rAdd('tb-hmu',false)"><i class="ti ti-plus"></i> Add contact</button>
+        <button class="add" onclick="rAdd('tb-hmu',true)"><i class="ti ti-plus"></i> Add contact</button>
       </div>
     </div>
 
@@ -1264,8 +1264,8 @@ function doCSV() {
     ['SCHEDULE'],['Time','Activity'],...tlAoa(),[''],
     ['CLIENT'],['Role','Name','Call','Phone'],...tAoa('tb-client'),[''],
     ['PHOTO'],['Role','Name','Agency','Call','Phone'],...tAoa('tb-photo'),[''],
-    ['STYLING'],['Role','Name','Call','Phone'],...tAoa('tb-style'),[''],
-    ['GLAM'],['Role','Name','Call','Phone'],...tAoa('tb-hmu'),[''],
+    ['STYLING'],['Role','Name','Agency','Call','Phone'],...tAoa('tb-style'),[''],
+    ['GLAM'],['Role','Name','Agency','Call','Phone'],...tAoa('tb-hmu'),[''],
     ['CASTING'],['Role','Name','Agency','Call','Phone'],...tAoa('tb-cast'),[''],
     ['PROD'],['Role','Name','Call','Phone'],...tAoa('tb-prod'),[''],
     ['PRACTICAL'],['Service','Info','Contact'],...tAoa('tb-info'),
@@ -1280,8 +1280,8 @@ function doXLSX() {
   XLSX.utils.book_append_sheet(wb,mk([['Time','Activity'],...tlAoa()],'Schedule'),'Schedule');
   XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Call','Phone'],...tAoa('tb-client')],'Client'),'Client');
   XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Agency','Call','Phone'],...tAoa('tb-photo')],'Photo'),'Photo');
-  XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Call','Phone'],...tAoa('tb-style')],'Styling'),'Styling');
-  XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Call','Phone'],...tAoa('tb-hmu')],'Glam'),'Glam');
+  XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Agency','Call','Phone'],...tAoa('tb-style')],'Styling'),'Styling');
+  XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Agency','Call','Phone'],...tAoa('tb-hmu')],'Glam'),'Glam');
   XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Agency','Call','Phone'],...tAoa('tb-cast')],'Casting'),'Casting');
   XLSX.utils.book_append_sheet(wb,mk([['Role','Name','Call','Phone'],...tAoa('tb-prod')],'Prod'),'Production');
   XLSX.utils.book_append_sheet(wb,mk([['Service','Info','Contact'],...tAoa('tb-info')],'Practical'),'Practical');
