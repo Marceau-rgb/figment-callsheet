@@ -247,14 +247,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:
 .tlr:hover .tlx,.tlr:hover .tlb{opacity:1}
 
 .cw{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead th{text-align:left;padding:4px 7px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1.5px solid var(--ink);font-weight:500;white-space:nowrap}
-tbody td{padding:5px 7px;border-bottom:1px solid var(--bg);outline:none;cursor:text;vertical-align:top}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+thead th{text-align:left;padding:4px 7px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1.5px solid var(--ink);font-weight:500;white-space:nowrap;overflow:hidden}
+tbody td{padding:5px 7px;border-bottom:1px solid var(--bg);outline:none;cursor:text;vertical-align:top;overflow:hidden;word-break:break-word}
 tbody td:focus{background:var(--bg)}
 tbody tr:hover td{background:var(--bg)}
-.tdx{opacity:0;cursor:pointer;color:var(--muted);font-size:11px;padding:3px}
+.tdx{opacity:0;cursor:pointer;color:var(--muted);font-size:11px;padding:3px;width:18px}
 tbody tr:hover .tdx{opacity:1}
 .tdag{color:var(--muted);font-style:italic}
+/* Consistent column widths across all crew tables */
+.col-role{width:22%}
+.col-name{width:26%}
+.col-agency{width:18%}
+.col-call{width:11%}
+.col-phone{width:20%}
+.col-del{width:18px}
+/* 3-col tables (no agency) */
+.col-role-wide{width:26%}
+.col-name-wide{width:36%}
 .add{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;margin-top:7px;border:1px dashed var(--soft);border-radius:20px;background:none;color:var(--muted);cursor:pointer}
 .add:hover{background:var(--bg);border-style:solid;border-color:var(--ink);color:var(--ink)}
 .na{border-left:3px solid var(--soft);padding:8px 12px;background:var(--bg);border-radius:0 10px 10px 0;font-size:12px;line-height:1.6;cursor:text;min-height:40px;outline:none}
@@ -562,12 +572,12 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">04</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Note</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-client">
-          <tr><td contenteditable spellcheck="false">Creative Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Project Manager</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Creative Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Project Manager</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
         </tbody></table></div>
-        <button class="add" onclick="rAdd('tb-client',false)"><i class="ti ti-plus"></i> Add contact</button>
+        <button class="add" onclick="rAdd('tb-client',true)"><i class="ti ti-plus"></i> Add contact</button>
       </div>
     </div>
 
@@ -579,7 +589,7 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">05</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-style">
           <tr><td contenteditable spellcheck="false">Stylist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
           <tr><td contenteditable spellcheck="false">Styling Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
@@ -597,7 +607,7 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">06</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-hmu">
           <tr><td contenteditable spellcheck="false">Hair Stylist</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
           <tr><td contenteditable spellcheck="false">Hair Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
@@ -616,7 +626,7 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">07</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-photo">
           <tr><td contenteditable spellcheck="false">Photographer / Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
           <tr><td contenteditable spellcheck="false">1st Photo Assistant</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
@@ -634,7 +644,7 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">08</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Agency</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-cast">
           <tr><td contenteditable spellcheck="false">Casting Director</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[C/O Agency]</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
           <tr><td contenteditable spellcheck="false">Model</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">[Agency]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
@@ -652,13 +662,13 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">09</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col class="col-role"><col class="col-name"><col class="col-agency"><col class="col-call"><col class="col-phone"><col class="col-del"></colgroup><thead><tr><th>Role</th><th>First &amp; Last Name</th><th>Note</th><th>Call Time</th><th>Phone</th><th></th></tr></thead>
         <tbody id="tb-prod">
-          <tr><td contenteditable spellcheck="false">Producer</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Production Manager</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
-          <tr><td contenteditable spellcheck="false">Runner</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Producer</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Production Manager</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
+          <tr><td contenteditable spellcheck="false">Runner</td><td contenteditable spellcheck="false">[First Last]</td><td contenteditable spellcheck="false" class="tdag">—</td><td contenteditable spellcheck="false">xx:xx</td><td contenteditable spellcheck="false">+xx x xx xx xx xx</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
         </tbody></table></div>
-        <button class="add" onclick="rAdd('tb-prod',false)"><i class="ti ti-plus"></i> Add contact</button>
+        <button class="add" onclick="rAdd('tb-prod',true)"><i class="ti ti-plus"></i> Add contact</button>
       </div>
     </div>
 
@@ -670,7 +680,7 @@ tbody tr:hover .tdx{opacity:1}
         <span class="sn">10</span>
       </div>
       <div class="wbody">
-        <div class="cw"><table><thead><tr><th>Service</th><th>Address / Info</th><th>Contact</th><th></th></tr></thead>
+        <div class="cw"><table><colgroup><col style="width:28%"><col style="width:46%"><col style="width:22%"><col class="col-del"></colgroup><thead><tr><th>Service</th><th>Address / Info</th><th>Contact</th><th></th></tr></thead>
         <tbody id="tb-info">
           <tr><td contenteditable spellcheck="false">SAMU</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">15</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
           <tr><td contenteditable spellcheck="false">Fire Brigade</td><td contenteditable spellcheck="false">—</td><td contenteditable spellcheck="false">18</td><td class="tdx" onclick="rDel(this)">✕</td></tr>
