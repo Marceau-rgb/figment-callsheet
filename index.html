@@ -946,7 +946,18 @@ function restoreAll(){
 function getProjs(){try{return JSON.parse(localStorage.getItem(PROJ_KEY))||{};}catch{return{};}}
 function toggleProjMenu(){const m=document.getElementById('proj-menu');if(m.classList.contains('open')){m.classList.remove('open');}else{renderProjList();m.classList.add('open');}}
 function renderProjList(){const projs=getProjs(),id=getCurId(),list=document.getElementById('proj-list');list.innerHTML='';const sorted=Object.values(projs).sort((a,b)=>(b.updated||0)-(a.updated||0));if(!sorted.length){list.innerHTML='<div style="padding:7px 11px;font-size:12px;color:var(--muted)">No saved projects</div>';return;}sorted.forEach(p=>{const d=document.createElement('div');d.className='xi';if(p.id===id)d.style.cssText='background:var(--bg);font-weight:600';d.innerHTML='<i class="ti ti-file-text" style="font-size:15px;width:18px;color:var(--muted)"></i><span style="flex:1;font-size:12px">'+(p.name||'Untitled')+'</span>'+(p.id===id?'<span style="font-size:10px;color:var(--muted)">current</span>':'<span onclick="delProj(\''+p.id+'\',event)" style="font-size:11px;color:#ccc;padding:2px 5px;cursor:pointer" title="Delete">✕</span>');d.onclick=()=>{if(p.id!==id)switchProj(p.id);else document.getElementById('proj-menu').classList.remove('open');};list.appendChild(d);});}
-function newProject(){saveAll();const id='proj_'+Date.now();const projs=getProjs();projs[id]={id,name:'New Project',created:Date.now(),updated:Date.now()};localStorage.setItem(PROJ_KEY,JSON.stringify(projs));localStorage.setItem(CUR_KEY,id);document.getElementById('proj-menu').classList.remove('open');location.reload();}
+function newProject(){
+  saveAll(); // save current project first
+  const id='proj_'+Date.now();
+  const projs=getProjs();
+  projs[id]={id,name:'New Project',created:Date.now(),updated:Date.now()};
+  localStorage.setItem(PROJ_KEY,JSON.stringify(projs));
+  localStorage.setItem(CUR_KEY,id);
+  // Don't let beforeunload save old data into new project
+  window._skipSave=true;
+  document.getElementById('proj-menu').classList.remove('open');
+  location.reload();
+}
 function duplicateProject(){saveAll();const data=collectData();const newId='proj_'+Date.now();const projs=getProjs();const cur=projs[getCurId()]||{};projs[newId]={id:newId,name:(cur.name||'Project')+' (copy)',created:Date.now(),updated:Date.now()};localStorage.setItem(PROJ_KEY,JSON.stringify(projs));localStorage.setItem('figment_cs_'+newId,JSON.stringify(data));localStorage.setItem(CUR_KEY,newId);document.getElementById('proj-menu').classList.remove('open');location.reload();}
 function switchProj(id){saveAll();localStorage.setItem(CUR_KEY,id);location.reload();}
 function delProj(id,e){e.stopPropagation();const projs=getProjs();if(Object.keys(projs).length<=1){showSB('Cannot delete the only project');return;}if(!confirm('Delete "'+projs[id]?.name+'"?'))return;delete projs[id];localStorage.removeItem('figment_cs_'+id);localStorage.setItem(PROJ_KEY,JSON.stringify(projs));if(getCurId()===id)localStorage.setItem(CUR_KEY,Object.keys(projs)[0]);location.reload();}
@@ -1005,7 +1016,7 @@ function checkShare(){
 const observer=new MutationObserver(scheduleS);
 observer.observe(document.getElementById('content-area'),{childList:true,subtree:true,characterData:true,attributes:false});
 document.getElementById('sdate-hdr')?.addEventListener('change',scheduleS);
-window.addEventListener('beforeunload',saveAll);
+window.addEventListener('beforeunload',()=>{if(!window._skipSave)saveAll();});
 window.clearSave=()=>{localStorage.removeItem(getSK());showSB('Cleared — reload to reset');};
 
 if(!checkShare()){restoreAll();}
