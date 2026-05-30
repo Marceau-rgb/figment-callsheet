@@ -186,6 +186,88 @@ body.read-only [contenteditable]{pointer-events:none;cursor:default}
 body.read-only .add,.read-only .tlx,.read-only .tlb,.read-only .tdx,.read-only .gh,.read-only .wbtns,.read-only .sr2,.read-only #proj-sw-wrap,.read-only .xwrap{display:none!important}
 
 /* PRINT */
+/* ══ MOBILE READ-ONLY VIEW ══════════════════ */
+body.mobile-view{background:var(--bg);-webkit-text-size-adjust:100%}
+body.mobile-view #top-bar{display:none}
+body.mobile-view #page{padding:0 0 32px;max-width:100%}
+
+/* Mobile header */
+body.mobile-view #hdr-grid{
+  display:flex;flex-direction:column;gap:0;margin-bottom:0;
+  background:var(--card);border-radius:0;
+  padding:16px 18px;border-bottom:1px solid var(--soft);
+}
+body.mobile-view #w-client-logo{order:1;border-radius:0;box-shadow:none}
+body.mobile-view .hdr-client-logo{min-height:60px;justify-content:flex-start;padding:0}
+body.mobile-view #cimg{max-height:44px}
+body.mobile-view .hdr-client-ph{display:none}
+body.mobile-view #w-project-name{order:2;border-radius:0;box-shadow:none}
+body.mobile-view .proj-wh{border-bottom:none;padding:8px 0 0}
+body.mobile-view .proj-wh .wlabel{font-size:26px}
+body.mobile-view .proj-wh .gh{display:none}
+body.mobile-view .proj-body{padding:4px 0 0}
+body.mobile-view .proj-body .fl{font-size:11px}
+body.mobile-view .cs-date-input{font-size:15px}
+body.mobile-view .cs-date-display{font-size:12px}
+
+/* Mobile content — single column */
+body.mobile-view #content-area{
+  display:flex;flex-direction:column;gap:0;padding:8px 12px;
+}
+body.mobile-view #col-left,
+body.mobile-view #col-right,
+body.mobile-view #col-full{
+  display:contents;
+}
+
+/* Mobile widgets */
+body.mobile-view .widget{
+  border-radius:16px;margin-bottom:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+body.mobile-view .wh{padding:12px 16px 10px;cursor:default}
+body.mobile-view .wlabel{font-size:20px}
+body.mobile-view .wbody{padding:0 16px 16px}
+
+/* Mobile fields */
+body.mobile-view .fv{font-size:15px;padding:4px 0}
+body.mobile-view .fv.md{font-size:17px}
+body.mobile-view .fl{font-size:10px;margin-bottom:4px}
+
+/* Mobile tables */
+body.mobile-view table{font-size:13px}
+body.mobile-view thead th{font-size:9px;padding:5px 6px}
+body.mobile-view tbody td{padding:8px 6px;font-size:13px;line-height:1.4}
+
+/* Mobile timeline */
+body.mobile-view .tlr{padding:10px 0}
+body.mobile-view .tlt{font-size:14px;min-width:56px}
+body.mobile-view .tld{font-size:14px}
+
+/* Mobile map */
+body.mobile-view #mpbx{height:160px;border-radius:12px}
+
+/* Mobile weather */
+body.mobile-view .wx-left-temp{font-size:48px}
+body.mobile-view .wx-left-icon i{font-size:36px}
+
+/* Mobile note */
+body.mobile-view .na{font-size:14px;padding:12px 14px;border-radius:0 12px 12px 0}
+
+/* Mobile footer */
+body.mobile-view #figment-footer{padding:20px 16px}
+body.mobile-view #figment-footer img{height:32px}
+
+/* Mobile share banner */
+body.mobile-view .share-banner{font-size:11px;padding:10px 16px;position:sticky;top:0;z-index:500}
+
+/* Phone links styling */
+body.mobile-view a[href^="tel:"]{
+  color:var(--ink)!important;text-decoration:none;
+  border-bottom:1px dotted var(--muted);
+  pointer-events:auto!important;
+}
+
 /* FOOTER */
 #figment-footer{text-align:center;padding:24px 16px 32px;opacity:.6}
 #figment-footer:hover{opacity:1}
@@ -857,7 +939,33 @@ function updateProjLabel(){const name=document.getElementById('hproj')?.textCont
 
 /* ══ SHARE ══ */
 function shareSheet(){try{saveAll();const data=collectData();delete data.clientLogo;const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const url=location.origin+location.pathname+'?share='+b64;navigator.clipboard.writeText(url).then(()=>showSB('✓ Share link copied!',4000)).catch(()=>prompt('Copy link:',url));}catch(e){showSB('Share failed: '+e.message);}}
-function checkShare(){const params=new URLSearchParams(location.search);const share=params.get('share');if(!share)return false;try{const data=JSON.parse(decodeURIComponent(escape(atob(share))));restoreData(data);document.body.classList.add('read-only');const bn=document.querySelector('.share-banner');if(bn)bn.style.display='block';return true;}catch(e){console.warn('Share load failed:',e);return false;}}
+
+function makeTelLinks(){
+  // In read-only, convert phone numbers in tables to clickable tel: links
+  document.querySelectorAll('tbody td').forEach(td => {
+    const txt = td.textContent.trim();
+    const phone = txt.replace(/[\s.\-]/g,'');
+    if (/^\+?\d{8,15}$/.test(phone) && phone.length >= 8) {
+      td.innerHTML = '<a href="tel:' + phone + '" style="color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--muted)">' + txt + '</a>';
+      td.style.pointerEvents = 'auto';
+    }
+  });
+  // Also the on-set contact field
+  document.querySelectorAll('.fv').forEach(fv => {
+    const txt = fv.textContent.trim();
+    const parts = txt.split('·');
+    if (parts.length >= 2) {
+      const phone = parts[parts.length-1].trim().replace(/[\s.\-]/g,'');
+      if (/^\+?\d{8,15}$/.test(phone) && phone.length >= 8) {
+        const name = parts.slice(0,-1).join('·').trim();
+        const raw = parts[parts.length-1].trim();
+        fv.innerHTML = name + ' · <a href="tel:' + phone + '" style="color:var(--ink);border-bottom:1px dotted var(--muted);text-decoration:none">' + raw + '</a>';
+        fv.style.pointerEvents = 'auto';
+      }
+    }
+  });
+}
+function checkShare(){const params=new URLSearchParams(location.search);const share=params.get('share');if(!share)return false;try{const data=JSON.parse(decodeURIComponent(escape(atob(share))));restoreData(data);document.body.classList.add('read-only');if(window.innerWidth<768||params.get('view')==='mobile')document.body.classList.add('mobile-view');const bn=document.querySelector('.share-banner');if(bn)bn.style.display='block';makeTelLinks();return true;}catch(e){console.warn('Share load failed:',e);return false;}}
 
 /* ══ INIT ══ */
 const observer=new MutationObserver(scheduleS);
