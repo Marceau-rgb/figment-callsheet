@@ -183,7 +183,8 @@ tbody tr:hover .tdx{opacity:1}
 .share-banner{display:none;background:var(--ink);color:#fff;text-align:center;font-size:12px;padding:8px 16px}
 body.read-only .share-banner{display:block}
 /* ══ READ-ONLY MODE ══════════════════════════ */
-body.read-only [contenteditable]{pointer-events:none;cursor:default}
+body.read-only [contenteditable]{pointer-events:none;cursor:default;-webkit-user-modify:read-only;user-modify:read-only}
+body.read-only a[href^="tel:"],body.read-only a[href^="https://"]{pointer-events:auto!important;cursor:pointer!important}
 body.read-only .add,body.read-only .tlx,body.read-only .tlb,body.read-only .tdx,
 body.read-only .gh,body.read-only .wbtns,body.read-only .sr2,
 body.read-only .proj-sw-wrap,body.read-only .xwrap,
@@ -191,8 +192,9 @@ body.read-only #top-bar,body.read-only .hdr-client-ph,
 body.read-only #mp-ph,body.read-only .mls{display:none!important}
 body.read-only .wh{cursor:default!important}
 body.read-only #cimg[style*="display: none"]+.hdr-client-ph{display:none!important}
-body.read-only #w-client-logo{display:none}
-body.read-only #w-client-logo:has(#cimg[style*="display: block"]){display:block}
+body.read-only .hdr-client-logo{min-height:0!important}
+body.read-only .hdr-client-ph{display:none!important}
+body.read-only #cimg[style*="display: none"]~.hdr-client-ph{display:none!important}
 /* Force single column in read-only */
 body.read-only #content-area{display:flex!important;flex-direction:column!important;gap:var(--gap)!important}
 body.read-only #col-left,body.read-only #col-right,body.read-only #col-full{display:contents!important}
@@ -901,6 +903,8 @@ function collectData(){
   document.querySelectorAll('.wlabel').forEach(el=>{const wid=el.closest('.widget')?.id;if(wid)data.labels[wid]=el.textContent;});
   data.collapsed=[...document.querySelectorAll('.wbody.closed')].map(el=>el.closest('.widget')?.id).filter(Boolean);
   const ci=document.getElementById('cimg');if(ci?.style.display!=='none'&&ci?.src?.startsWith('data:'))data.clientLogo=ci.src;
+  // Save location coords for share
+  if(gLat&&gLon){data.lat=gLat;data.lon=gLon;data.city=gCity;}
   return data;
 }
 
@@ -999,13 +1003,60 @@ function checkShare(){
     const data=JSON.parse(decodeURIComponent(escape(atob(share))));
     restoreData(data);
     document.body.classList.add('read-only');
-    // Always add mobile-view on small screens or when forced
     if(window.innerWidth<768||params.get('view')==='mobile'){
       document.body.classList.add('mobile-view');
     }
-    // Show share banner
     const bn=document.querySelector('.share-banner');
     if(bn)bn.style.display='block';
+
+    // Disable ALL contenteditable
+    document.querySelectorAll('[contenteditable]').forEach(el=>{
+      el.contentEditable='false';
+      el.removeAttribute('spellcheck');
+    });
+
+    // Hide client logo widget if no logo uploaded
+    const cimg=document.getElementById('cimg');
+    if(!cimg||cimg.style.display==='none'||!cimg.src||!cimg.src.startsWith('data:')){
+      document.getElementById('w-client-logo').style.display='none';
+    }
+
+    // Hide map placeholder, show map if we have coords
+    const laddr=document.getElementById('laddr');
+    if(laddr){
+      const addr=laddr.textContent.trim();
+      if(addr&&addr!=='[Address, Postcode, City]'){
+        // Make address a clickable Google Maps link
+        const mapUrl='https://www.google.com/maps/search/'+encodeURIComponent(addr);
+        laddr.innerHTML='<a href="'+mapUrl+'" target="_blank" style="color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--muted)">'+addr+'</a>';
+        laddr.style.pointerEvents='auto';
+      }
+    }
+
+    // Load map and weather from saved coords or by searching
+    if(data.lat&&data.lon){
+      initLeafletMap(data.lat,data.lon);
+      const dateVal=document.getElementById('sdate-hdr')?.value;
+      if(dateVal)loadWx(data.lat,data.lon,data.city||'',dateVal);
+    } else {
+      const locName=document.getElementById('lname')?.textContent?.trim()||'';
+      if(locName&&locName!=='[Studio / Venue]'){
+        fetch('https://photon.komoot.io/api/?q='+encodeURIComponent(locName)+'&limit=1&lang=en')
+          .then(r=>r.json()).then(d=>{
+            if(d.features?.length){
+              const lat=d.features[0].geometry.coordinates[1],lon=d.features[0].geometry.coordinates[0];
+              initLeafletMap(lat,lon);
+              const dateVal=document.getElementById('sdate-hdr')?.value;
+              if(dateVal)loadWx(lat,lon,locName,dateVal);
+            }
+          }).catch(()=>{});
+      }
+    }
+
+    // Hide empty map placeholder
+    const mph=document.getElementById('mp-ph');
+    if(mph)mph.style.display='none';
+
     // Make phone numbers clickable
     makeTelLinks();
     return true;
