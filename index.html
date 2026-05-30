@@ -973,7 +973,7 @@ function delProj(id,e){e.stopPropagation();const projs=getProjs();if(Object.keys
 function updateProjLabel(){const name=document.getElementById('hproj')?.textContent||'';const lbl=document.getElementById('proj-sw-label');if(lbl)lbl.textContent=name.length>16?name.slice(0,16)+'…':(name||'Projects');}
 
 /* ══ SHARE ══ */
-function shareSheet(){try{saveAll();const data=collectData();const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const url=location.origin+location.pathname+'?share='+b64;navigator.clipboard.writeText(url).then(()=>showSB('✓ Share link copied!',4000)).catch(()=>prompt('Copy link:',url));}catch(e){showSB('Share failed: '+e.message);}}
+function shareSheet(){try{saveAll();const data=collectData();delete data.clientLogo;const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const url=location.origin+location.pathname+'?share='+b64;navigator.clipboard.writeText(url).then(()=>showSB('✓ Share link copied!',4000)).catch(()=>prompt('Copy link:',url));}catch(e){showSB('Share failed: '+e.message);}}
 
 function makeTelLinks(){
   // In read-only, convert phone numbers in tables to clickable tel: links
