@@ -182,8 +182,21 @@ tbody tr:hover .tdx{opacity:1}
 /* SHARE BANNER */
 .share-banner{display:none;background:var(--ink);color:#fff;text-align:center;font-size:12px;padding:8px 16px}
 body.read-only .share-banner{display:block}
+/* ══ READ-ONLY MODE ══════════════════════════ */
 body.read-only [contenteditable]{pointer-events:none;cursor:default}
-body.read-only .add,.read-only .tlx,.read-only .tlb,.read-only .tdx,.read-only .gh,.read-only .wbtns,.read-only .sr2,.read-only #proj-sw-wrap,.read-only .xwrap{display:none!important}
+body.read-only .add,body.read-only .tlx,body.read-only .tlb,body.read-only .tdx,
+body.read-only .gh,body.read-only .wbtns,body.read-only .sr2,
+body.read-only .proj-sw-wrap,body.read-only .xwrap,
+body.read-only #top-bar,body.read-only .hdr-client-ph,
+body.read-only #mp-ph,body.read-only .mls{display:none!important}
+body.read-only .wh{cursor:default!important}
+body.read-only #cimg[style*="display: none"]+.hdr-client-ph{display:none!important}
+body.read-only #w-client-logo{display:none}
+body.read-only #w-client-logo:has(#cimg[style*="display: block"]){display:block}
+/* Force single column in read-only */
+body.read-only #content-area{display:flex!important;flex-direction:column!important;gap:var(--gap)!important}
+body.read-only #col-left,body.read-only #col-right,body.read-only #col-full{display:contents!important}
+body.read-only .widget{width:100%!important}
 
 /* PRINT */
 /* ══ MOBILE READ-ONLY VIEW ══════════════════ */
@@ -212,13 +225,14 @@ body.mobile-view .cs-date-display{font-size:12px}
 
 /* Mobile content — single column */
 body.mobile-view #content-area{
-  display:flex;flex-direction:column;gap:0;padding:8px 12px;
+  display:flex!important;flex-direction:column!important;gap:0!important;padding:8px 12px!important;
 }
 body.mobile-view #col-left,
 body.mobile-view #col-right,
 body.mobile-view #col-full{
-  display:contents;
+  display:contents!important;
 }
+body.mobile-view .widget{width:100%!important}
 
 /* Mobile widgets */
 body.mobile-view .widget{
@@ -324,7 +338,7 @@ body.mobile-view a[href^="tel:"]{
 </head>
 <body>
 
-<div class="share-banner">👁 Read-only — <a href="https://marceau-rgb.github.io/figment-callsheet/" style="color:#fff">Open editable version</a></div>
+<div class="share-banner">👁 Read-only · Figment Production</div>
 
 <!-- TOP BAR -->
 <div id="top-bar">
@@ -594,6 +608,7 @@ function startDrag(e) {
 }
 
 function initDrag(w, cx, cy) {
+  if (document.body.classList.contains('read-only')) return;
   const id   = w.id.replace('w-','');
   if (!LAYOUT.find(x => x.id===id)) return; // skip header widgets
   const rect = w.getBoundingClientRect();
@@ -965,7 +980,26 @@ function makeTelLinks(){
     }
   });
 }
-function checkShare(){const params=new URLSearchParams(location.search);const share=params.get('share');if(!share)return false;try{const data=JSON.parse(decodeURIComponent(escape(atob(share))));restoreData(data);document.body.classList.add('read-only');if(window.innerWidth<768||params.get('view')==='mobile')document.body.classList.add('mobile-view');const bn=document.querySelector('.share-banner');if(bn)bn.style.display='block';makeTelLinks();return true;}catch(e){console.warn('Share load failed:',e);return false;}}
+function checkShare(){
+  const params=new URLSearchParams(location.search);
+  const share=params.get('share');
+  if(!share)return false;
+  try{
+    const data=JSON.parse(decodeURIComponent(escape(atob(share))));
+    restoreData(data);
+    document.body.classList.add('read-only');
+    // Always add mobile-view on small screens or when forced
+    if(window.innerWidth<768||params.get('view')==='mobile'){
+      document.body.classList.add('mobile-view');
+    }
+    // Show share banner
+    const bn=document.querySelector('.share-banner');
+    if(bn)bn.style.display='block';
+    // Make phone numbers clickable
+    makeTelLinks();
+    return true;
+  }catch(e){console.warn('Share load failed:',e);return false;}
+}
 
 /* ══ INIT ══ */
 const observer=new MutationObserver(scheduleS);
