@@ -962,13 +962,18 @@ function newProject(){
   document.getElementById('proj-menu').classList.remove('open');
   location.reload();
 }
-function duplicateProject(){saveAll();const data=collectData();const newId='proj_'+Date.now();const projs=getProjs();const cur=projs[getCurId()]||{};projs[newId]={id:newId,name:(cur.name||'Project')+' (copy)',created:Date.now(),updated:Date.now()};localStorage.setItem(PROJ_KEY,JSON.stringify(projs));localStorage.setItem('figment_cs_'+newId,JSON.stringify(data));localStorage.setItem(CUR_KEY,newId);document.getElementById('proj-menu').classList.remove('open');location.reload();}
-function switchProj(id){saveAll();localStorage.setItem(CUR_KEY,id);location.reload();}
-function delProj(id,e){e.stopPropagation();const projs=getProjs();if(Object.keys(projs).length<=1){showSB('Cannot delete the only project');return;}if(!confirm('Delete "'+projs[id]?.name+'"?'))return;delete projs[id];localStorage.removeItem('figment_cs_'+id);localStorage.setItem(PROJ_KEY,JSON.stringify(projs));if(getCurId()===id)localStorage.setItem(CUR_KEY,Object.keys(projs)[0]);location.reload();}
+function duplicateProject(){saveAll();window._skipSave=true;const data=collectData();const newId='proj_'+Date.now();const projs=getProjs();const cur=projs[getCurId()]||{};projs[newId]={id:newId,name:(cur.name||'Project')+' (copy)',created:Date.now(),updated:Date.now()};localStorage.setItem(PROJ_KEY,JSON.stringify(projs));localStorage.setItem('figment_cs_'+newId,JSON.stringify(data));localStorage.setItem(CUR_KEY,newId);document.getElementById('proj-menu').classList.remove('open');location.reload();}
+function switchProj(id){
+  saveAll(); // save current project BEFORE switching
+  localStorage.setItem(CUR_KEY,id);
+  window._skipSave=true; // don't let beforeunload overwrite target project
+  location.reload();
+}
+function delProj(id,e){e.stopPropagation();const projs=getProjs();if(Object.keys(projs).length<=1){showSB('Cannot delete the only project');return;}if(!confirm('Delete "'+projs[id]?.name+'"?'))return;delete projs[id];localStorage.removeItem('figment_cs_'+id);localStorage.setItem(PROJ_KEY,JSON.stringify(projs));if(getCurId()===id)localStorage.setItem(CUR_KEY,Object.keys(projs)[0]);window._skipSave=true;location.reload();}
 function updateProjLabel(){const name=document.getElementById('hproj')?.textContent||'';const lbl=document.getElementById('proj-sw-label');if(lbl)lbl.textContent=name.length>16?name.slice(0,16)+'…':(name||'Projects');}
 
 /* ══ SHARE ══ */
-function shareSheet(){try{saveAll();const data=collectData();delete data.clientLogo;const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const url=location.origin+location.pathname+'?share='+b64;navigator.clipboard.writeText(url).then(()=>showSB('✓ Share link copied!',4000)).catch(()=>prompt('Copy link:',url));}catch(e){showSB('Share failed: '+e.message);}}
+function shareSheet(){try{saveAll();const data=collectData();const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));const url=location.origin+location.pathname+'?share='+b64;navigator.clipboard.writeText(url).then(()=>showSB('✓ Share link copied!',4000)).catch(()=>prompt('Copy link:',url));}catch(e){showSB('Share failed: '+e.message);}}
 
 function makeTelLinks(){
   // In read-only, convert phone numbers in tables to clickable tel: links
